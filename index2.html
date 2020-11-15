@@ -103,14 +103,9 @@
       var lyrTopo;
       var lyrImagery;
       var lyrOutdoors;
-      var lyrChapultepec;
+      var lyrEagleNests;
       var mrkCurrentLocation;
-      var mrkMuseo;
-      var plnBikeRoute;
-      var plyParks;
-      var fgpChapultepec;
       var fgpDrawnItems;
-      var popZocalo;
       var ctlAttribute;
       var ctlScale;
       var ctlPan;
@@ -128,7 +123,7 @@
       $(document).ready(function () {
         mymap = L.map("mapdiv", {
           center: [19.4, -99.2],
-          zoom: 13,
+          zoom: 9,
           zoomControl: false,
           attributionControl: false,
         });
@@ -146,9 +141,18 @@
           Outdoors: lyrOutdoors,
           Watercolor: lyrWatercolor,
         };
-        fgpDrawnItems = new L.featureGroup();
+        fgpDrawnItems = new L.featureGroup().addTo(mymap);
+        lyrEagleNests= L.geoJSON.ajax('data/wildlife_eagle.geojson',
+        {pointToLayer:returnEaglrMarker,filter:filterEagleNests}
+        ).addTo(mymap);
+
+        //getting the bounds of the datacet of eaglenest and setting the map to those bounds
+        lyrEagleNests.on('data:loaded',function () {
+            mymap.fitBounds(lyrEagleNests.getBounds());
+        })
         objOverlays = {
           "Drawn Items": fgpDrawnItems,
+          "Nest Data":lyrEagleNests
         };
 
         ctlLayers = L.control.layers(objBasemaps, objOverlays).addTo(mymap);
@@ -228,6 +232,23 @@
       function LatLngToArrayString(ll) {
         //                console.log(ll);
         return "[" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "]";
+      }
+      function returnEaglrMarker(json, latlng) {
+          var att = json.properties;
+          if (att.status=='ACTIVE NEST') {
+              var clrNest='deeppink'
+          }else{
+              var clrNest='lightblue'
+          }
+          return L.circleMarker(latlng,{radius:7,color:clrNest}).bindTooltip("<h4>Eagle Nest: "+att.nest_id+"</h4>status:"+att.status)
+      }
+      function filterEagleNests(json) {
+          var att = json.properties;
+          if (att.status=='ACTIVE NEST') {
+              return true;
+          }else{
+              return false;
+          }
       }
     </script>
   </body>
