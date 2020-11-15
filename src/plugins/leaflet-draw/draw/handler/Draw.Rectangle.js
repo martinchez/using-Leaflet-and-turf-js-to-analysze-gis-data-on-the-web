@@ -17,9 +17,9 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 			fill: true,
 			fillColor: null, //same as color by default
 			fillOpacity: 0.2,
+			showArea: true,
 			clickable: true
 		},
-		showArea: true, //Whether to show the area in the tooltip
 		metric: true // Whether to use the metric measurement system or imperial
 	},
 
@@ -31,30 +31,6 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 		this._initialLabelText = L.drawLocal.draw.handlers.rectangle.tooltip.start;
 
 		L.Draw.SimpleShape.prototype.initialize.call(this, map, options);
-	},
-
-	// @method disable(): void
-	disable: function () {
-		if (!this._enabled) {
-			return;
-		}
-
-		this._isCurrentlyTwoClickDrawing = false;
-		L.Draw.SimpleShape.prototype.disable.call(this);
-	},
-
-	_onMouseUp: function (e) {
-		if (!this._shape && !this._isCurrentlyTwoClickDrawing) {
-			this._isCurrentlyTwoClickDrawing = true;
-			return;
-		}
-
-		// Make sure closing click is on map
-		if (this._isCurrentlyTwoClickDrawing && !_hasAncestor(e.target, 'leaflet-pane')) {
-			return;
-		}
-
-		L.Draw.SimpleShape.prototype._onMouseUp.call(this);
 	},
 
 	_drawShape: function (latlng) {
@@ -80,7 +56,7 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 		if (shape) {
 			latLngs = this._shape._defaultShape ? this._shape._defaultShape() : this._shape.getLatLngs();
 			area = L.GeometryUtil.geodesicArea(latLngs);
-			subtext = showArea ? L.GeometryUtil.readableArea(area, this.options.metric) : '';
+			subtext = showArea ? L.GeometryUtil.readableArea(area, this.options.metric) : ''
 		}
 
 		return {
@@ -89,10 +65,3 @@ L.Draw.Rectangle = L.Draw.SimpleShape.extend({
 		};
 	}
 });
-
-function _hasAncestor(el, cls) {
-	while ((el = el.parentElement) && !el.classList.contains(cls)) {
-		;
-	}
-	return el;
-}

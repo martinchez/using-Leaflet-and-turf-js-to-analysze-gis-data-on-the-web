@@ -6,8 +6,10 @@ L.Edit = L.Edit || {};
  * @aka Edit.Poly
  */
 L.Edit.Poly = L.Handler.extend({
+	options: {},
+
 	// @method initialize(): void
-	initialize: function (poly) {
+	initialize: function (poly, options) {
 
 		this.latlngs = [poly._latlngs];
 		if (poly._holes) {
@@ -15,6 +17,7 @@ L.Edit.Poly = L.Handler.extend({
 		}
 
 		this._poly = poly;
+		L.setOptions(this, options);
 
 		this._poly.on('revert-edited', this._updateLatLngs, this);
 	},
@@ -62,7 +65,7 @@ L.Edit.Poly = L.Handler.extend({
 	_initHandlers: function () {
 		this._verticesHandlers = [];
 		for (var i = 0; i < this.latlngs.length; i++) {
-			this._verticesHandlers.push(new L.Edit.PolyVerticesEdit(this._poly, this.latlngs[i], this._poly.options.poly));
+			this._verticesHandlers.push(new L.Edit.PolyVerticesEdit(this._poly, this.latlngs[i], this.options));
 		}
 	},
 
@@ -127,25 +130,11 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	// Add listener hooks to this handler.
 	addHooks: function () {
 		var poly = this._poly;
-		var path = poly._path;
 
 		if (!(poly instanceof L.Polygon)) {
 			poly.options.fill = false;
 			if (poly.options.editing) {
 				poly.options.editing.fill = false;
-			}
-		}
-
-		if (path) {
-			if (poly.options.editing && poly.options.editing.className) {
-				if (poly.options.original.className) {
-					poly.options.original.className.split(' ').forEach(function (className) {
-						L.DomUtil.removeClass(path, className);
-					});
-				}
-				poly.options.editing.className.split(' ').forEach(function (className) {
-					L.DomUtil.addClass(path, className);
-				});
 			}
 		}
 
@@ -166,20 +155,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	// Remove listener hooks from this handler.
 	removeHooks: function () {
 		var poly = this._poly;
-		var path = poly._path;
-
-		if (path) {
-			if (poly.options.editing && poly.options.editing.className) {
-				poly.options.editing.className.split(' ').forEach(function (className) {
-					L.DomUtil.removeClass(path, className);
-				});
-				if (poly.options.original.className) {
-					poly.options.original.className.split(' ').forEach(function (className) {
-						L.DomUtil.addClass(path, className);
-					});
-				}
-			}
-		}
 
 		poly.setStyle(poly.options.original);
 
@@ -210,7 +185,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 			marker = this._createMarker(latlngs[i], i);
 			marker.on('click', this._onMarkerClick, this);
-			marker.on('contextmenu', this._onContextMenu, this);
 			this._markers.push(marker);
 		}
 
@@ -287,24 +261,39 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 	_fireEdit: function () {
 		this._poly.edited = true;
 		this._poly.fire('edit');
-		this._poly._map.fire(L.Draw.Event.EDITVERTEX, {layers: this._markerGroup, poly: this._poly});
+		this._poly._map.fire(L.Draw.Event.EDITVERTEX, { layers: this._markerGroup, poly: this._poly });
 	},
 
 	_onMarkerDrag: function (e) {
 		var marker = e.target;
 		var poly = this._poly;
 
-		var oldOrigLatLng = L.LatLngUtil.cloneLatLng(marker._origLatLng);
 		L.extend(marker._origLatLng, marker._latlng);
+
+		if (marker._middleLeft) {
+			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
+		}
+		if (marker._middleRight) {
+			marker._middleRight.setLatLng(this._getMiddleLatLng(marker, marker._next));
+		}
+
 		if (poly.options.poly) {
 			var tooltip = poly._map._editTooltip; // Access the tooltip
 
 			// If we don't allow intersections and the polygon intersects
 			if (!poly.options.poly.allowIntersection && poly.intersects()) {
-				L.extend(marker._origLatLng, oldOrigLatLng);
-				marker.setLatLng(oldOrigLatLng);
+
 				var originalColor = poly.options.color;
-				poly.setStyle({color: this.options.drawError.color});
+				poly.setStyle({ color: this.options.drawError.color });
+
+				// Manually trigger 'dragend' behavior on marker we are about to remove
+				// WORKAROUND: introduced in 1.0.0-rc2, may be related to #4484
+				if (L.version.indexOf('0.7') !== 0) {
+					marker.dragging._draggable._onUp(e);
+				}
+				this._onMarkerClick(e); // Remove violating marker
+				// FIXME: Reset the marker to it's original position (instead of remove)
+
 				if (tooltip) {
 					tooltip.updateContent({
 						text: L.drawLocal.draw.handlers.polyline.error
@@ -313,7 +302,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 
 				// Reset everything back to normal after a second
 				setTimeout(function () {
-					poly.setStyle({color: originalColor});
+					poly.setStyle({ color: originalColor });
 					if (tooltip) {
 						tooltip.updateContent({
 							text: L.drawLocal.edit.handlers.edit.tooltip.text,
@@ -324,18 +313,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			}
 		}
 
-		if (marker._middleLeft) {
-			marker._middleLeft.setLatLng(this._getMiddleLatLng(marker._prev, marker));
-		}
-		if (marker._middleRight) {
-			marker._middleRight.setLatLng(this._getMiddleLatLng(marker, marker._next));
-		}
-
-		//refresh the bounds when draging
-		this._poly._bounds._southWest = L.latLng(Infinity, Infinity);
-		this._poly._bounds._northEast = L.latLng(-Infinity, -Infinity);
-		var latlngs = this._poly.getLatLngs();
-		this._poly._convertLatLngs(latlngs, true);
 		this._poly.redraw();
 		this._poly.fire('editdrag');
 	},
@@ -376,13 +353,6 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 		}
 
 		this._fireEdit();
-	},
-
-	_onContextMenu: function (e) {
-		var marker = e.target;
-		var poly = this._poly;
-		this._poly._map.fire(L.Draw.Event.MARKERCONTEXT, {marker: marker, layers: this._markerGroup, poly: this._poly});
-		L.DomEvent.stopPropagation;
 	},
 
 	_onTouchMove: function (e) {
@@ -499,7 +469,7 @@ L.Polyline.addInitHook(function () {
 
 	if (L.Edit.Poly) {
 
-		this.editing = new L.Edit.Poly(this);
+		this.editing = new L.Edit.Poly(this, this.options.poly);
 
 		if (this.options.editable) {
 			this.editing.enable();

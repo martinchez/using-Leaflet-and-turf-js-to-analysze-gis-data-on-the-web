@@ -12,7 +12,6 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 
 	options: {
 		showArea: false,
-		showLength: false,
 		shapeOptions: {
 			stroke: true,
 			color: '#3388ff',
@@ -23,14 +22,7 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 			fillOpacity: 0.2,
 			clickable: true
 		},
-		// Whether to use the metric measurement system (truthy) or not (falsy).
-		// Also defines the units to use for the metric system as an array of
-		// strings (e.g. `['ha', 'm']`).
-		metric: true,
-		feet: true, // When not metric, to use feet instead of yards for display.
-		nautic: false, // When not metric, not feet use nautic mile for display
-		// Defines the precision for each type of unit (e.g. {km: 2, ft: 0}
-		precision: {}
+		metric: true // Whether to use the metric measurement system or imperial
 	},
 
 	// @method initialize(): void
@@ -66,7 +58,6 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 			text = L.drawLocal.draw.handlers.polygon.tooltip.start;
 		} else if (this._markers.length < 3) {
 			text = L.drawLocal.draw.handlers.polygon.tooltip.cont;
-			subtext = this._getMeasurementString();
 		} else {
 			text = L.drawLocal.draw.handlers.polygon.tooltip.end;
 			subtext = this._getMeasurementString();
@@ -79,23 +70,13 @@ L.Draw.Polygon = L.Draw.Polyline.extend({
 	},
 
 	_getMeasurementString: function () {
-		var area = this._area,
-			measurementString = '';
+		var area = this._area;
 
-
-		if (!area && !this.options.showLength) {
+		if (!area) {
 			return null;
 		}
 
-		if (this.options.showLength) {
-			measurementString = L.Draw.Polyline.prototype._getMeasurementString.call(this);
-		}
-
-		if (area) {
-			measurementString += '<br>' + L.GeometryUtil.readableArea(area, this.options.metric, this.options.precision);
-		}
-
-		return measurementString;
+		return L.GeometryUtil.readableArea(area, this.options.metric);
 	},
 
 	_shapeIsValid: function () {

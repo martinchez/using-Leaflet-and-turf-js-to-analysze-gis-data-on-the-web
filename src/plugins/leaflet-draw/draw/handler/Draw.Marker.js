@@ -19,8 +19,6 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		// Save the type so super can fire, need to do this as cannot do this.TYPE :(
 		this.type = L.Draw.Marker.TYPE;
 
-		this._initialLabelText = L.drawLocal.draw.handlers.marker.tooltip.start;
-
 		L.Draw.Feature.prototype.initialize.call(this, map, options);
 	},
 
@@ -30,7 +28,7 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		L.Draw.Feature.prototype.addHooks.call(this);
 
 		if (this._map) {
-			this._tooltip.updateContent({text: this._initialLabelText});
+			this._tooltip.updateContent({ text: L.drawLocal.draw.handlers.marker.tooltip.start });
 
 			// Same mouseMarker as in Draw.Polyline
 			if (!this._mouseMarker) {
@@ -60,12 +58,11 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		L.Draw.Feature.prototype.removeHooks.call(this);
 
 		if (this._map) {
-			this._map
-				.off('click', this._onClick, this)
-				.off('click', this._onTouch, this);
 			if (this._marker) {
 				this._marker.off('click', this._onClick, this);
 				this._map
+					.off('click', this._onClick, this)
+					.off('click', this._onTouch, this)
 					.removeLayer(this._marker);
 				delete this._marker;
 			}
@@ -85,7 +82,10 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		this._mouseMarker.setLatLng(latlng);
 
 		if (!this._marker) {
-			this._marker = this._createMarker(latlng);
+			this._marker = new L.Marker(latlng, {
+				icon: this.options.icon,
+				zIndexOffset: this.options.zIndexOffset
+			});
 			// Bind to both marker and map to make sure we get the click event.
 			this._marker.on('click', this._onClick, this);
 			this._map
@@ -96,13 +96,6 @@ L.Draw.Marker = L.Draw.Feature.extend({
 			latlng = this._mouseMarker.getLatLng();
 			this._marker.setLatLng(latlng);
 		}
-	},
-
-	_createMarker: function (latlng) {
-		return new L.Marker(latlng, {
-			icon: this.options.icon,
-			zIndexOffset: this.options.zIndexOffset
-		});
 	},
 
 	_onClick: function () {
@@ -121,7 +114,7 @@ L.Draw.Marker = L.Draw.Feature.extend({
 	},
 
 	_fireCreatedEvent: function () {
-		var marker = new L.Marker.Touch(this._marker.getLatLng(), {icon: this.options.icon});
+		var marker = new L.Marker.Touch(this._marker.getLatLng(), { icon: this.options.icon });
 		L.Draw.Feature.prototype._fireCreatedEvent.call(this, marker);
 	}
 });

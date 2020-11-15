@@ -22,7 +22,6 @@ L.Draw.Tooltip = L.Class.extend({
 	initialize: function (map) {
 		this._map = map;
 		this._popupPane = map._panes.popupPane;
-		this._visible = false;
 
 		this._container = map.options.drawControlTooltips ?
 			L.DomUtil.create('div', 'leaflet-draw-tooltip', this._popupPane) : null;
@@ -62,16 +61,8 @@ L.Draw.Tooltip = L.Class.extend({
 
 		this._container.innerHTML =
 			(labelText.subtext.length > 0 ?
-				'<span class="leaflet-draw-tooltip-subtext">' + labelText.subtext + '</span>' + '<br />' : '') +
+			'<span class="leaflet-draw-tooltip-subtext">' + labelText.subtext + '</span>' + '<br />' : '') +
 			'<span>' + labelText.text + '</span>';
-
-		if (!labelText.text && !labelText.subtext) {
-			this._visible = false;
-			this._container.style.visibility = 'hidden';
-		} else {
-			this._visible = true;
-			this._container.style.visibility = 'inherit';
-		}
 
 		return this;
 	},
@@ -83,9 +74,7 @@ L.Draw.Tooltip = L.Class.extend({
 			tooltipContainer = this._container;
 
 		if (this._container) {
-			if (this._visible) {
-				tooltipContainer.style.visibility = 'inherit';
-			}
+			tooltipContainer.style.visibility = 'inherit';
 			L.DomUtil.setPosition(tooltipContainer, pos);
 		}
 

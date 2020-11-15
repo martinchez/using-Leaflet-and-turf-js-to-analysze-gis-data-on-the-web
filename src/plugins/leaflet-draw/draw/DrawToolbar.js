@@ -13,8 +13,7 @@ L.DrawToolbar = L.Toolbar.extend({
 		polygon: {},
 		rectangle: {},
 		circle: {},
-		marker: {},
-		circlemarker: {}
+		marker: {}
 	},
 
 	// @method initialize(): void
@@ -60,11 +59,6 @@ L.DrawToolbar = L.Toolbar.extend({
 				enabled: this.options.marker,
 				handler: new L.Draw.Marker(map, this.options.marker),
 				title: L.drawLocal.draw.toolbar.buttons.marker
-			},
-			{
-				enabled: this.options.circlemarker,
-				handler: new L.Draw.CircleMarker(map, this.options.circlemarker),
-				title: L.drawLocal.draw.toolbar.buttons.circlemarker
 			}
 		];
 	},

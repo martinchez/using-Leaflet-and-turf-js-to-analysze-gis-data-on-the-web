@@ -78,8 +78,8 @@ L.EditToolbar = L.Toolbar.extend({
 
 	// @method getActions(): object
 	// Get actions information
-	getActions: function (handler) {
-		var actions = [
+	getActions: function () {
+		return [
 			{
 				title: L.drawLocal.edit.toolbar.actions.save.title,
 				text: L.drawLocal.edit.toolbar.actions.save.text,
@@ -91,19 +91,14 @@ L.EditToolbar = L.Toolbar.extend({
 				text: L.drawLocal.edit.toolbar.actions.cancel.text,
 				callback: this.disable,
 				context: this
-			}
-		];
-
-		if (handler.removeAllLayers) {
-			actions.push({
+			},
+			{
 				title: L.drawLocal.edit.toolbar.actions.clearAll.title,
 				text: L.drawLocal.edit.toolbar.actions.clearAll.text,
 				callback: this._clearAllLayers,
 				context: this
-			});
-		}
-
-		return actions;
+			}
+		];
 	},
 
 	// @method addToolbar(map): L.DomUtil
@@ -145,7 +140,7 @@ L.EditToolbar = L.Toolbar.extend({
 		}
 	},
 
-	_clearAllLayers: function () {
+	_clearAllLayers:function(){
 		this._activeMode.handler.removeAllLayers();
 		if (this._activeMode) {
 			this._activeMode.handler.disable();

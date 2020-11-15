@@ -101,8 +101,7 @@ L.drawLocal = {
 				polygon: 'Draw a polygon',
 				rectangle: 'Draw a rectangle',
 				circle: 'Draw a circle',
-				marker: 'Draw a marker',
-				circlemarker: 'Draw a circlemarker'
+				marker: 'Draw a marker'
 			}
 		},
 		handlers: {
@@ -111,11 +110,6 @@ L.drawLocal = {
 					start: 'Click and drag to draw circle.'
 				},
 				radius: 'Radius'
-			},
-			circlemarker: {
-				tooltip: {
-					start: 'Click map to place circle marker.'
-				}
 			},
 			marker: {
 				tooltip: {
@@ -153,35 +147,35 @@ L.drawLocal = {
 		toolbar: {
 			actions: {
 				save: {
-					title: 'Save changes',
+					title: 'Save changes.',
 					text: 'Save'
 				},
 				cancel: {
-					title: 'Cancel editing, discards all changes',
+					title: 'Cancel editing, discards all changes.',
 					text: 'Cancel'
 				},
-				clearAll: {
-					title: 'Clear all layers',
+				clearAll:{
+					title: 'clear all layers.',
 					text: 'Clear All'
 				}
 			},
 			buttons: {
-				edit: 'Edit layers',
-				editDisabled: 'No layers to edit',
-				remove: 'Delete layers',
-				removeDisabled: 'No layers to delete'
+				edit: 'Edit layers.',
+				editDisabled: 'No layers to edit.',
+				remove: 'Delete layers.',
+				removeDisabled: 'No layers to delete.'
 			}
 		},
 		handlers: {
 			edit: {
 				tooltip: {
-					text: 'Drag handles or markers to edit features.',
+					text: 'Drag handles, or marker to edit feature.',
 					subtext: 'Click cancel to undo changes.'
 				}
 			},
 			remove: {
 				tooltip: {
-					text: 'Click on a feature to remove.'
+					text: 'Click on a feature to remove'
 				}
 			}
 		}
