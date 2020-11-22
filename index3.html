@@ -78,6 +78,20 @@
     <!--    **************  End of Lealet Draw-->
 
     <script src="src/plugins/leaflet.ajax.min.js"></script>
+    <!--Leaflet sprite plugin-->
+    <script src="src/plugins/leaflet.sprite.js"></script>
+
+    <!-- Font awsome -->
+    <link rel="stylesheet" href="src/css/font-awesome.min.css">
+
+    <!-- fontawsome leaflet plugin -->
+    <!-- <link rel="stylesheet" href="src/plugins/leaflet.awesome-markers.css">
+    <script src="src/plugins/leaflet.awesome-markers.min.js"></script>
+
+    leaflet mapkey plugin -->
+    <!-- <link rel="stylesheet" href="src/plugins/leaflet-mapkey/MapkeyIcons.css">
+    <link rel="stylesheet" href="src/plugins/leaflet-mapkey/L.Icon.Mapkey.css">
+    <script src="src/plugins/leaflet-mapkey/L.Icon.Mapkey.js"></script> -->
 
     <style>
         #mapdiv {
@@ -115,8 +129,33 @@
         var ctlStyle;
         var objBasemaps;
         var objOverlays;
+        // var icnRedSprite
+        // var icnVioletSprite
+        // var icnLAMtree
+        // var icnLAMbird
+        // var icnLMKtree
+        // var icnLMKbird
+        // var icnEagleInactive
+        // var icnEagleActive
+
 
         $(document).ready(function () {
+            //defining the sprite colors
+            // icnRedSprite=L.spriteIcon("red")
+            // icnVioletSprite=L.spriteIcon("violet")
+            
+            // // defining fontawsomeleaflet icons
+            // icnLAMtree=L.AwesomeMarkers.icon({icon:'tree-conifer',markerColor:'green'})
+            // icnLAMbird=L.AwesomeMarkers.icon({icon:'twitter',spin:true,iconColor:'#ff0000',markerColor:'green',prefix:'fa'})
+
+            // //defining mapkey icons
+            // icnLMKtree=L.icon.mapkey({icon:"bar",color:'#725139',background:'purple',size:30})
+            // icnLMKbird=L.icon.mapkey({icon:"school",color:'#725139',background:'red',size:50,borderRadius:18})
+
+            // defining a custom icon
+            // icnEagleInactive=L.icon({iconUrl:'img/nest.png',iconSize:[40,40],iconAnchor:[20,24]})
+            // icnEagleActive=L.icon({iconUrl:'img/nest2.png',iconSize:[40,40],iconAnchor:[20,24]})
+
             mymap = L.map("mapdiv", {
                 center: [19.4, -99.2],
                 zoom: 9,
@@ -259,6 +298,12 @@
                 //   var dashNest='1,8';
             }
             return L.circle(latlng, { radius: 804, color: clrNest, fillColor: 'green', fillOpacity: 0.5 }).bindTooltip("<h4>Eagle Nest: " + att.nest_id + "</h4>status:" + att.status)
+            // if (att.status=='ACTIVE NEST') {
+            //     var incEagle=icnEagleActive;
+            // }else{
+            //     var incEagle = icnEagleInactive;
+            // }
+            // return L.marker(latlng, {icon:incEagle}).bindTooltip("<h4>Eagle Nest: " + att.nest_id + "</h4>status:" + att.status)
         }
         function returnRaptorMarker(json, latlng) {
             var att = json.properties;
