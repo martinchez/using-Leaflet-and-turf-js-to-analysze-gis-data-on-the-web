@@ -92,7 +92,10 @@
     <!-- <link rel="stylesheet" href="src/plugins/leaflet-mapkey/MapkeyIcons.css">
     <link rel="stylesheet" href="src/plugins/leaflet-mapkey/L.Icon.Mapkey.css">
     <script src="src/plugins/leaflet-mapkey/L.Icon.Mapkey.js"></script> -->
-
+    <!-- leaflets marker control -->
+    <link rel="stylesheet" href="src/plugins/MarkerCluster.css">
+    <link rel="stylesheet" href="src/plugins/MarkerCluster.Default.css">
+    <script src="src/plugins/leaflet.markercluster.js"></script>
     <style>
         #mapdiv {
             height: 100vh;
@@ -114,6 +117,7 @@
         var lyrOutdoors;
         var lyrEagleNests;
         var lyrRaptorNests;
+        var lyrMarkerCluster;
         var mrkCurrentLocation;
         var fgpDrawnItems;
         var ctlAttribute;
@@ -188,19 +192,22 @@
                 mymap.fitBounds(lyrEagleNests.getBounds());
             })
 
+            //////////////////////////Marker cluster control//////////////////////////////////
+            lyrMarkerCluster=L.markerClusterGroup();
             //////////////////////////raptor Layer//////////////////////////////////
             lyrRaptorNests = L.geoJSON.ajax('data/wildlife_raptor.geojson',
                 { pointToLayer: returnRaptorMarker }
             );
             //getting the bounds of the datacet of eaglenest and setting the map to those bounds
             lyrRaptorNests.on('data:loaded', function () {
-                lyrRaptorNests.addTo(mymap)
+                lyrMarkerCluster.addLayer(lyrRaptorNests);
+                lyrMarkerCluster.addTo(mymap)
             })
             ///////////////////////Layer Control////////////////
             objOverlays = {
                 "Drawn Items": fgpDrawnItems,
                 "Nest Data": lyrEagleNests,
-                "Raptor Nests": lyrRaptorNests
+                "Raptor Nests": lyrMarkerCluster
             };
 
             ctlLayers = L.control.layers(objBasemaps, objOverlays).addTo(mymap);
