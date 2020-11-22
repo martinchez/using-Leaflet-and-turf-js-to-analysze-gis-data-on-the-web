@@ -143,7 +143,7 @@
         };
         fgpDrawnItems = new L.featureGroup().addTo(mymap);
         lyrEagleNests= L.geoJSON.ajax('data/wildlife_eagle.geojson',
-        {pointToLayer:returnEaglrMarker,filter:filterEagleNests}
+        {pointToLayer:returnEaglrMarker}
         ).addTo(mymap);
 
         //getting the bounds of the datacet of eaglenest and setting the map to those bounds
@@ -237,19 +237,22 @@
           var att = json.properties;
           if (att.status=='ACTIVE NEST') {
               var clrNest='deeppink'
+             // var wgtNest=7;
+             // var opcNest=1;
+             // var clrNest='deepgreen';
+             // var dashNest='';
           }else{
-              var clrNest='lightblue'
+            var clrNest='green'
+            //bellow are other variable we can use to style the symbols appearing on the map
+            //   var wgtNest=7;
+            //   var opcNest=1;
+            //   var clrNest='lightgreen';
+            //   var dashNest='1,8';
           }
-          return L.circleMarker(latlng,{radius:7,color:clrNest}).bindTooltip("<h4>Eagle Nest: "+att.nest_id+"</h4>status:"+att.status)
+          return L.circleMarker(latlng,{radius:7,color:clrNest,fillColor:'green',fillOpacity:0.5}).bindTooltip("<h4>Eagle Nest: "+att.nest_id+"</h4>status:"+att.status)
       }
-      function filterEagleNests(json) {
-          var att = json.properties;
-          if (att.status=='ACTIVE NEST') {
-              return true;
-          }else{
-              return false;
-          }
-      }
+    
+      
     </script>
   </body>
 </html>
