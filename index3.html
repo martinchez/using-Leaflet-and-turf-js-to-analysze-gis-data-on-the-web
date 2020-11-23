@@ -119,6 +119,7 @@
         var lyrRaptorNests;
         var lyrMarkerCluster;
         var lyrClientLines;
+        var lyrBOUWEL;
         var mrkCurrentLocation;
         var fgpDrawnItems;
         var ctlAttribute;
@@ -208,12 +209,16 @@
             lyrClientLines = L.geoJSON.ajax('data/client_lines.geojson',
                 { style: styleClientLine, onEachFeature: processClientLinears }
             ).addTo(mymap)
+            lyrBOUWEL - L.geoJSON.ajax('data/wildlife_bouwl.geojson',
+                { style: styleBOUWL, onEachFeature: processBOUWL, filter: filterBOUWL }
+            ).addTo(mymap);
             ///////////////////////Layer Control////////////////
             objOverlays = {
                 "Drawn Items": fgpDrawnItems,
                 "Nest Data": lyrEagleNests,
                 "Raptor Nests": lyrMarkerCluster,
-                "Client Line": lyrClientLines
+                "Client Line": lyrClientLines,
+                "Burrowing": lyrBOUWEL
             };
 
 
@@ -373,13 +378,37 @@
                     return { color: 'dindigo' }
                     break;
                 default:
-                    return{color:'darkgoldenrod'}
+                    return { color: 'darkgoldenrod' }
                     break;
             }
         }
-        function processClientLinears(json,lyr) {
-            var att =json.properties;
-            lyr.bindTooltip("<h4>linear project: "+att.Project+"<h4> Type:"+att.type+"<br>Row: "+att.row_width)
+        function processClientLinears(json, lyr) {
+            var att = json.properties;
+            lyr.bindTooltip("<h4>linear project: " + att.Project + "</h4> Type:" + att.type + "<br>Row: " + att.row_width)
+        }
+        function styleBOUWL(json) {
+            var att = json.properties;
+            switch (att.hist_occup) {
+                case 'Yes':
+                return {color:'deeppink',fillColor:'yellow'}
+                    break;
+                case 'Undetermined':
+                    return {color:'yellow'}
+                    break;
+            }
+        }
+        function processBOUWL(json, lyr) {
+            var att = json.properties
+            lyr.bindTooltip("<h4>Habitat ID: " + att.habitat_id + "</h4> Historically occupied:" + att.hist_occup + "<br>Status: " + att.recentstatus)
+            
+        }
+        function filterBOUWL(json) {
+            var att = json.properties
+            if (att.recentstatus=='REMOVED') {
+                return false
+            }else{
+                return true;
+            }
         }
 
     </script>
