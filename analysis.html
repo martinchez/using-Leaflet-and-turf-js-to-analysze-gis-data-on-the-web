@@ -185,7 +185,7 @@
                 { pointToLayer: returnEaglrMarker }
             ).addTo(mymap);
             lyrEagleNests.on('data:loaded', function () {
-                mymap.fitBounds(lyrEagleNests.getBounds());
+                // mymap.fitBounds(lyrEagleNests.getBounds());
             })
 
             lyrMarkerCluster = L.markerClusterGroup();
