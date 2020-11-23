@@ -91,15 +91,48 @@
         #mapdiv {
             height: 100vh;
         }
+        .col-xs-12,.col-xs-6,.col-xs-4{
+            padding: 3px;
+        }
+        #divProject {
+            background-color: beige;
+        }
+
+        .errorMsg {
+            padding: 0;
+            text-align: center;
+            background-color: darksalmon;
+        }
+        
     </style>
 </head>
 
 <body>
     <div id="side-bar" class="col-md-3">
-        <button id="btnLocate" class="btn btn-primary btn-block">Locate</button>
+        <button id="btnLocate" class="btn btn-primary btn-block">Locate</button><br>
+        <div id="divProject" class="col-xs-12">
+            <div id="divProjectLabel" class="col-xs-12">
+                <h4>Linear project</h4>
+            </div>
+            <div id="divProjectError" class="errorMsg col-xs-12"></div>
+            <div id="divFindProject" class="form-group">
+                <div class="col-xs-6">
+                    <input type="text" id="txtFindProject" class="form-control" placeholder="Project ID">
+                </div>
+                <div class="col-xs-6">
+                    <button id="btnFindProject" class="btn btn-primary btn-block">
+                        find Project
+                    </button>
+                </div>
+            </div>
+            <div class="" id="divProjectData"></div>
+        </div>
     </div>
     <div id="mapdiv" class="col-md-12"></div>
+
     <script>
+            // ************************* Declaring Global variables************************//
+
         var mymap;
         var lyrOSM;
         var lyrWatercolor;
@@ -274,7 +307,7 @@
                 alert("Location was not found");
             });
         });
-         // ************************* Bouwl functions************************//
+        // ************************* Bouwl functions************************//
 
         function styleBOUWL(json) {
             var att = json.properties;
@@ -300,7 +333,7 @@
                 return true;
             }
         }
-         // ************************* Client line functions************************//
+        // ************************* Client line functions************************//
 
         function styleClientLine(json) {
             var att = json.properties;
@@ -335,9 +368,9 @@
             var att = json.properties;
             lyr.bindTooltip("<h4>linear project: " + att.Project + "</h4> Type:" + att.type + "<br>Row: " + att.row_width)
         }
-         // ************************* Eagle marker functions************************//
-         
-         function returnEaglrMarker(json, latlng) {
+        // ************************* Eagle marker functions************************//
+
+        function returnEaglrMarker(json, latlng) {
             var att = json.properties;
             if (att.status == 'ACTIVE NEST') {
                 var clrNest = 'deeppink'
@@ -349,7 +382,7 @@
             return L.circle(latlng, { radius: 804, color: clrNest, fillColor: 'green', fillOpacity: 0.5 }).bindTooltip("<h4>Eagle Nest: " + att.nest_id + "</h4>status:" + att.status)
 
         }
-         // ************************* Raptor marker functions************************//
+        // ************************* Raptor marker functions************************//
 
         function returnRaptorMarker(json, latlng) {
             var att = json.properties;
@@ -380,19 +413,19 @@
             }
             return L.circle(latlng, optRaptor).bindTooltip("<h4>Raptor Nest: " + att.Nest_ID + "</h4>status:" + att.recentstatus + "<br> Species: " + att.recentspecies + "<br>Last Survey: " + att.lastsurvey)
         }
-        
-         // ************************* Jquery Events handlers************************//
+
+        // ************************* Jquery Events handlers************************//
 
         $("#btnLocate").click(function () {
             mymap.locate();
         });
 
-         // ************************* General functions************************//
+        // ************************* General functions************************//
 
         function LatLngToArrayString(ll) {
-             
-             return "[" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "]";
-         }
+
+            return "[" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "]";
+        }
     </script>
 </body>
 
