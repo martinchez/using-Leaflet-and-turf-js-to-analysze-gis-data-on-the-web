@@ -119,6 +119,7 @@
         var lyrRaptorNests;
         var lyrMarkerCluster;
         var lyrClientLines;
+        var lyrGBH
         var lyrBOUWEL;
         var mrkCurrentLocation;
         var fgpDrawnItems;
@@ -209,16 +210,21 @@
             lyrClientLines = L.geoJSON.ajax('data/client_lines.geojson',
                 { style: styleClientLine, onEachFeature: processClientLinears }
             ).addTo(mymap)
-            lyrBOUWEL - L.geoJSON.ajax('data/wildlife_bouwl.geojson',
+
+            lyrBOUWEL = L.geoJSON.ajax('data/wildlife_buowl.geojson',
                 { style: styleBOUWL, onEachFeature: processBOUWL, filter: filterBOUWL }
-            ).addTo(mymap);
+            ).addTo(mymap)
+            lyrGBH = L.geoJSON.ajax('data/wildlife_gbh.geojson',
+                { style: { color: 'fuchsia' } }
+            ).bindTooltip("GBH nesting area").addTo(mymap);
             ///////////////////////Layer Control////////////////
             objOverlays = {
                 "Drawn Items": fgpDrawnItems,
                 "Nest Data": lyrEagleNests,
                 "Raptor Nests": lyrMarkerCluster,
                 "Client Line": lyrClientLines,
-                "Burrowing": lyrBOUWEL
+                "Burrowing": lyrBOUWEL,
+                "GBH DATA": lyrGBH
             };
 
 
@@ -390,23 +396,23 @@
             var att = json.properties;
             switch (att.hist_occup) {
                 case 'Yes':
-                return {color:'deeppink',fillColor:'yellow'}
+                    return { color: 'deeppink', fillColor: 'yellow' }
                     break;
                 case 'Undetermined':
-                    return {color:'yellow'}
+                    return { color: 'yellow' }
                     break;
             }
         }
         function processBOUWL(json, lyr) {
             var att = json.properties
             lyr.bindTooltip("<h4>Habitat ID: " + att.habitat_id + "</h4> Historically occupied:" + att.hist_occup + "<br>Status: " + att.recentstatus)
-            
+
         }
         function filterBOUWL(json) {
             var att = json.properties
-            if (att.recentstatus=='REMOVED') {
+            if (att.recentstatus == 'REMOVED') {
                 return false
-            }else{
+            } else {
                 return true;
             }
         }
