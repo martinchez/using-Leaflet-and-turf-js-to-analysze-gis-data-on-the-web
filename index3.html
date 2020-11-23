@@ -118,6 +118,7 @@
         var lyrEagleNests;
         var lyrRaptorNests;
         var lyrMarkerCluster;
+        var lyrClientLines;
         var mrkCurrentLocation;
         var fgpDrawnItems;
         var ctlAttribute;
@@ -147,7 +148,7 @@
             //defining the sprite colors
             // icnRedSprite=L.spriteIcon("red")
             // icnVioletSprite=L.spriteIcon("violet")
-            
+
             // // defining fontawsomeleaflet icons
             // icnLAMtree=L.AwesomeMarkers.icon({icon:'tree-conifer',markerColor:'green'})
             // icnLAMbird=L.AwesomeMarkers.icon({icon:'twitter',spin:true,iconColor:'#ff0000',markerColor:'green',prefix:'fa'})
@@ -193,7 +194,7 @@
             })
 
             //////////////////////////Marker cluster control//////////////////////////////////
-            lyrMarkerCluster=L.markerClusterGroup();
+            lyrMarkerCluster = L.markerClusterGroup();
             //////////////////////////raptor Layer//////////////////////////////////
             lyrRaptorNests = L.geoJSON.ajax('data/wildlife_raptor.geojson',
                 { pointToLayer: returnRaptorMarker }
@@ -203,13 +204,18 @@
                 lyrMarkerCluster.addLayer(lyrRaptorNests);
                 lyrMarkerCluster.addTo(mymap)
             })
+            // 
+            lyrClientLines = L.geoJSON.ajax('data/client_lines.geojson',
+                { style: styleClientLine, onEachFeature: processClientLinears }
+            ).addTo(mymap)
             ///////////////////////Layer Control////////////////
             objOverlays = {
                 "Drawn Items": fgpDrawnItems,
                 "Nest Data": lyrEagleNests,
-                "Raptor Nests": lyrMarkerCluster
+                "Raptor Nests": lyrMarkerCluster,
+                "Client Line": lyrClientLines
             };
-            
+
 
             ctlLayers = L.control.layers(objBasemaps, objOverlays).addTo(mymap);
 
@@ -317,14 +323,14 @@
             var att = json.properties;
             switch (att.recentspecies) {
                 case 'Red-tail Hawk':
-                    var radRaptor =533;
+                    var radRaptor = 533;
                     break;
-            
+
                 case 'swansons Hawk':
-                    var radRaptor=400;
+                    var radRaptor = 400;
                     break;
                 default:
-                    var radRaptor= 804
+                    var radRaptor = 804
                     break;
             }
 
@@ -336,13 +342,45 @@
                     var optRaptor = { radius: radRaptor, color: 'blue', fillColor: 'blue,fillOpacity:0.5' };
                     break;
                 case 'FLEDGED NEST':
-                    var optRaptor = {dashArray:"1,8", radius: radRaptor, color: 'deeppink', fillColor: 'blue', fillOpacity: 0.5 }
+                    var optRaptor = { dashArray: "1,8", radius: radRaptor, color: 'deeppink', fillColor: 'blue', fillOpacity: 0.5 }
                     break;
-                
-            }
-            return L.circle(latlng,optRaptor).bindTooltip("<h4>Raptor Nest: " + att.Nest_ID + "</h4>status:" + att.recentstatus + "<br> Species: "+att.recentspecies+"<br>Last Survey: "+att.lastsurvey)
-        }
 
+            }
+            return L.circle(latlng, optRaptor).bindTooltip("<h4>Raptor Nest: " + att.Nest_ID + "</h4>status:" + att.recentstatus + "<br> Species: " + att.recentspecies + "<br>Last Survey: " + att.lastsurvey)
+        }
+        function styleClientLine(json) {
+            var att = json.properties;
+            switch (att.type) {
+                case 'pipeline':
+                    return { color: 'peru' }
+                    break;
+                case 'Flowline':
+                    return { color: 'navy' }
+                    break;
+                case 'Flowline,est.':
+                    return { color: 'navy', dashArray: [5, 5] }
+                    break;
+                case 'FElectric Line':
+                    return { color: 'darkgreen' }
+                    break;
+                case 'Access Road - confirmed':
+                    return { color: 'darkred' }
+                    break;
+                case 'Access Road - Estimated':
+                    return { color: 'darkred', dashArray: [5, 5] }
+                    break;
+                case 'Extraction':
+                    return { color: 'dindigo' }
+                    break;
+                default:
+                    return{color:'darkgoldenrod'}
+                    break;
+            }
+        }
+        function processClientLinears(json,lyr) {
+            var att =json.properties;
+            lyr.bindTooltip("<h4>linear project: "+att.Project+"<h4> Type:"+att.type+"<br>Row: "+att.row_width)
+        }
 
     </script>
 </body>
