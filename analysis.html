@@ -370,19 +370,19 @@
             lyr.bindTooltip("<h4>linear project: " + att.Project + "</h4> Type:" + att.type + "<br>Row: " + att.row_width)
         }
 
-        function returnClientLineByID(id) {
-            var arlayers= lyrClientLines.getLayers();
-            for (let i = 0; i < arlayers.length-1; i++) {
-                var featureID = arlayers[i].feature.properties.Property;//whatever we are writing are the properties that are in the geojson file
+        function returnClientlineByID(id) {
+            var arLayers= lyrClientLines.getLayers();
+            for (i = 0; i < arLayers.length-1; i++) {
+                var featureID = arLayers[i].feature.properties.Property;//whatever we are writing are the properties that are in the geojson file
                 if (featureID==id) {
-                    return arlayers[id];
+                    return arLayers[id];
                 }
             }
             return false;
         }
         $("btnFindProject").click(function () {
             var id= $("txtFindProject").val();
-            var lyr = returnClientLineByID(id);
+            var lyr = returnClientlineByID(id);
             if (lyr) {
                 if (lyrSearch) {
                     lyrSearch.remove();
