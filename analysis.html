@@ -87,6 +87,10 @@
     <link rel="stylesheet" href="src/plugins/MarkerCluster.css">
     <link rel="stylesheet" href="src/plugins/MarkerCluster.Default.css">
     <script src="src/plugins/leaflet.markercluster.js"></script>
+    <!-- jquery autocomplete -->
+    <link rel="stylesheet" href="src/jquery-ui.min.css">
+    <script src="src/jquery-ui.min.js"></script>
+
     <style>
         #mapdiv {
             height: 100vh;
@@ -161,6 +165,7 @@
         var ctlStyle;
         var objBasemaps;
         var objOverlays;
+        var arProjectIDs=[];
 
 
         $(document).ready(function () {
@@ -237,6 +242,20 @@
             lyrClientLines = L.geoJSON.ajax('data/client_lines.geojson',
                 { style: styleClientLine, onEachFeature: processClientLinears }
             ).addTo(mymap)
+            // lyrClientLines.on('data:loaded',function () {
+            //     $("txtFindProject").autocomplete({
+            //         source:arProjectIDs
+            //     });
+            // });
+            lyrClientLines.on('data:loaded', function(){
+                    // arProjectIDs.sort(function(a,b){return a-b});
+                    arProjectIDs.sort(function (a,b) {
+                        return a-b
+                    })
+                    $("#txtFindProject").autocomplete({
+                        source:arProjectIDs
+                    });
+                });
 
             lyrBOUWEL = L.geoJSON.ajax('data/wildlife_buowl.geojson',
                 { style: styleBOUWL, onEachFeature: processBOUWL, filter: filterBOUWL }
@@ -368,31 +387,33 @@
         function processClientLinears(json, lyr) {
             var att = json.properties;
             lyr.bindTooltip("<h4>linear project: " + att.Project + "</h4> Type:" + att.type + "<br>Row: " + att.row_width)
+            arProjectIDs.push(att.Project.toString());
         }
 
         function returnClientlineByID(id) {
-            var arLayers= lyrClientLines.getLayers();
+            var arLayers = lyrClientLines.getLayers();
             for (i = 0; i < arLayers.length-1; i++) {
-                var featureID = arLayers[i].feature.properties.Property;//whatever we are writing are the properties that are in the geojson file
+                var featureID = arLayers[i].feature.properties.Project;
                 if (featureID==id) {
-                    return arLayers[id];
+                    return arLayers[i]
                 }
+                
             }
             return false;
         }
-        $("btnFindProject").click(function () {
-            var id= $("txtFindProject").val();
+        $("#btnFindProject").click(function () {
+            var id= $("#txtFindProject").val();
             var lyr = returnClientlineByID(id);
             if (lyr) {
                 if (lyrSearch) {
                     lyrSearch.remove();
                 }
-                lyrSearch=L.geoJSON(lyr.toGeoJson(),{style:{color:'red',weight:10,opacity:0.5}}).addTo(mymap);
+                lyrSearch=L.geoJSON(lyr.toGeoJSON(), {style:{color:'red',weight:10,opacity:0.5}}).addTo(mymap);
                 mymap.fitBounds(lyr.getBounds().pad(1));
                 var att = lyr.feature.properties;
-                $("#divProjectData").html("<h4> class='text-center'>attributes</h4> <h5> Type:"+att.type+"</h5> <h5> Row width: "+att.row_width +"M </h5>")
+                $("#divProjectData").html("<h4 class='text-center'>attributes</h4> <h5> Type:"+att.type+"</h5> <h5> Row width: "+att.row_width +"M </h5>")
             }else{
-                $("#divProjectError").html("##########Project id not Found")
+                $("#divProjectError").html("*********Project id not Found******")
             }
         })
         // ************************* Eagle marker functions************************//
