@@ -121,7 +121,7 @@
                 </div>
                 <div class="col-xs-6">
                     <button id="btnFindProject" class="btn btn-primary btn-block">
-                        find Project
+                        Find Project
                     </button>
                 </div>
             </div>
@@ -143,7 +143,8 @@
         var lyrRaptorNests;
         var lyrMarkerCluster;
         var lyrClientLines;
-        var lyrGBH
+        var lyrGBH;
+        var lyrSearch;
         var lyrBOUWEL;
         var mrkCurrentLocation;
         var fgpDrawnItems;
@@ -368,6 +369,32 @@
             var att = json.properties;
             lyr.bindTooltip("<h4>linear project: " + att.Project + "</h4> Type:" + att.type + "<br>Row: " + att.row_width)
         }
+
+        function returnClientLineByID(id) {
+            var arlayers= lyrClientLines.getLayers();
+            for (let i = 0; i < arlayers.length-1; i++) {
+                var featureID = arlayers[i].feature.properties.Property;//whatever we are writing are the properties that are in the geojson file
+                if (featureID==id) {
+                    return arlayers[id];
+                }
+            }
+            return false;
+        }
+        $("btnFindProject").click(function () {
+            var id= $("txtFindProject").val();
+            var lyr = returnClientLineByID(id);
+            if (lyr) {
+                if (lyrSearch) {
+                    lyrSearch.remove();
+                }
+                lyrSearch=L.geoJSON(lyr.toGeoJson(),{style:{color:'red',weight:10,opacity:0.5}}).addTo(mymap);
+                mymap.fitBounds(lyr.getBounds().pad(1));
+                var att = lyr.feature.properties;
+                $("#divProjectData").html("<h4> class='text-center'>attributes</h4> <h5> Type:"+att.type+"</h5> <h5> Row width: "+att.row_width +"M </h5>")
+            }else{
+                $("#divProjectError").html("##########Project id not Found")
+            }
+        })
         // ************************* Eagle marker functions************************//
 
         function returnEaglrMarker(json, latlng) {
