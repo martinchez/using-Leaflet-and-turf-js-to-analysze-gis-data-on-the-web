@@ -119,12 +119,12 @@
                 <h4>Linear project</h4>
             </div>
             <div id="divProjectError" class="errorMsg col-xs-12"></div>
-            <div id="divFindProject" class="form-group">
+            <div id="divFindProject" class="form-group has-error">
                 <div class="col-xs-6">
                     <input type="text" id="txtFindProject" class="form-control" placeholder="Project ID">
                 </div>
                 <div class="col-xs-6">
-                    <button id="btnFindProject" class="btn btn-primary btn-block">
+                    <button id="btnFindProject" class="btn btn-primary btn-block" disabled>
                         Find Project
                     </button>
                 </div>
@@ -401,6 +401,22 @@
             }
             return false;
         }
+        function testClientLineID(id) {
+            if (arProjectIDs.indexOf(id)<0) {
+                $("#divFindProject").addClass("has-error");
+                $("#divProjectError").html("******* Project ID NOT FOUND!***8");
+                $("#btnFindProject").attr("disabled",true);
+            }else{
+                $("#divFindProject").removeClass("has-error");
+                $("#divProjectError").html("");
+                $("#btnFindProject").attr("disabled",false);
+            }
+        }
+        $("#txtFindProject").on('keyup paste',function () {
+            var id = $("#txtFindProject").val();
+            testClientLineID(id);
+
+        })
         $("#btnFindProject").click(function () {
             var id= $("#txtFindProject").val();
             var lyr = returnClientlineByID(id);
