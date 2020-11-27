@@ -95,11 +95,27 @@
         #mapdiv {
             height: 100vh;
         }
-        .col-xs-12,.col-xs-6,.col-xs-4{
+
+        .col-xs-12,
+        .col-xs-6,
+        .col-xs-4 {
             padding: 3px;
         }
+
         #divProject {
             background-color: beige;
+        }
+
+        #divBUOWL {
+            background-color: #ffffb3;
+        }
+
+        #divEagle {
+            background-color: #ccffb3;
+        }
+
+        #divRaptor {
+            background-color: #e6ffff;
         }
 
         .errorMsg {
@@ -107,16 +123,15 @@
             text-align: center;
             background-color: darksalmon;
         }
-        
     </style>
 </head>
 
 <body>
     <div id="side-bar" class="col-md-3">
-        <button id="btnLocate" class="btn btn-primary btn-block">Locate</button><br>
+        <button id='btnLocate' class='btn btn-primary btn-block'>Locate</button><br>
         <div id="divProject" class="col-xs-12">
-            <div id="divProjectLabel" class="col-xs-12">
-                <h4>Linear project</h4>
+            <div id="divProjectLabel" class="text-center col-xs-12">
+                <h4 id="lblProject">Linear Projects</h4>
             </div>
             <div id="divProjectError" class="errorMsg col-xs-12"></div>
             <div id="divFindProject" class="form-group has-error">
@@ -124,18 +139,97 @@
                     <input type="text" id="txtFindProject" class="form-control" placeholder="Project ID">
                 </div>
                 <div class="col-xs-6">
-                    <button id="btnFindProject" class="btn btn-primary btn-block" disabled>
-                        Find Project
-                    </button>
+                    <button id="btnFindProject" class="btn btn-primary btn-block" disabled>Find Project</button>
                 </div>
             </div>
             <div class="" id="divProjectData"></div>
+        </div>
+        <div id="divBUOWL" class="col-xs-12">
+            <div id="divBUOWLLabel" class="text-center col-xs-12">
+                <h4 id="lblBUOWL">BUOWL Habitat</h4>
+            </div>
+            <div id="divBUOWLError" class="errorMsg col-xs-12"></div>
+            <div id="divFindBUOWL" class="form-group has-error">
+                <div class="col-xs-6">
+                    <input type="text" id="txtFindBUOWL" class="form-control" placeholder="Habitat ID">
+                </div>
+                <div class="col-xs-6">
+                    <button id="btnFindBUOWL" class="btn btn-primary btn-block" disabled>Find BUOWL</button>
+                </div>
+            </div>
+            <div id="divFilterBUOWL" class="col-xs-12">
+                <div class="col-xs-4">
+                    <input type='radio' name='fltBUOWL' value='ALL' checked>All
+                </div>
+                <div class="col-xs-4">
+                    <input type='radio' name='fltBUOWL' value='Yes'>Historically Occupied
+                </div>
+                <div class="col-xs-4">
+                    <input type='radio' name='fltBUOWL' value='Undetermined'>Undetermined
+                </div>
+            </div>
+            <div class="" id="divBUOWLData"></div>
+        </div>
+        <div id="divEagle" class="col-xs-12">
+            <div id="divEagleLabel" class="text-center col-xs-12">
+                <h4 id="lblEagle">Eagle Nests</h4>
+            </div>
+            <div id="divEagleError" class="errorMsg col-xs-12"></div>
+            <div id="divFindEagle" class="form-group has-error">
+                <div class="col-xs-6">
+                    <input type="text" id="txtFindEagle" class="form-control" placeholder="Eagle Nest ID">
+                </div>
+                <div class="col-xs-6">
+                    <button id="btnFindEagle" class="btn btn-primary btn-block" disabled>Find Eagle Nest</button>
+                </div>
+            </div>
+            <div id="divFilterEagle" class="col-xs-12">
+                <div class="col-xs-4">
+                    <input type='radio' name='fltEagle' value='ALL' checked>All
+                </div>
+                <div class="col-xs-4">
+                    <input type='radio' name='fltEagle' value='ACTIVE NEST'>Active
+                </div>
+                <div class="col-xs-4">
+                    <input type='radio' name='fltEagle' value='INACTIVE LOCATION'>Inactive
+                </div>
+            </div>
+            <div class="" id="divEagleData"></div>
+        </div>
+        <div id="divRaptor" class="col-xs-12">
+            <div id="divRaptorLabel" class="text-center col-xs-12">
+                <h4 id="lblRaptor">Raptor Nests</h4>
+            </div>
+            <div id="divRaptorError" class="errorMsg col-xs-12"></div>
+            <div id="divFindRaptor" class="form-group has-error">
+                <div class="col-xs-6">
+                    <input type="text" id="txtFindRaptor" class="form-control" placeholder="Raptor Nest ID">
+                </div>
+                <div class="col-xs-6">
+                    <button id="btnFindRaptor" class="btn btn-primary btn-block" disabled>Find Raptor Nest</button>
+                </div>
+            </div>
+            <div id="divFilterRaptor" class="col-xs-12">
+                <div class="col-xs-3">
+                    <input type='radio' name='fltRaptor' value='ALL' checked>All
+                </div>
+                <div class="col-xs-3">
+                    <input type='radio' name='fltRaptor' value='ACTIVE NEST'>Active
+                </div>
+                <div class="col-xs-3">
+                    <input type='radio' name='fltRaptor' value='INACTIVE NEST'>Inactive
+                </div>
+                <div class="col-xs-3">
+                    <input type='radio' name='fltRaptor' value='FLEDGED NEST'>Fledged
+                </div>
+            </div>
+            <div class="" id="divRaptorData"></div>
         </div>
     </div>
     <div id="mapdiv" class="col-md-12"></div>
 
     <script>
-            // ************************* Declaring Global variables************************//
+        // ************************* Declaring Global variables************************//
 
         var mymap;
         var lyrOSM;
@@ -165,7 +259,7 @@
         var ctlStyle;
         var objBasemaps;
         var objOverlays;
-        var arProjectIDs=[];
+        var arProjectIDs = [];
 
 
         $(document).ready(function () {
@@ -242,20 +336,15 @@
             lyrClientLines = L.geoJSON.ajax('data/client_lines.geojson',
                 { style: styleClientLine, onEachFeature: processClientLinears }
             ).addTo(mymap)
-            // lyrClientLines.on('data:loaded',function () {
-            //     $("txtFindProject").autocomplete({
-            //         source:arProjectIDs
-            //     });
-            // });
-            lyrClientLines.on('data:loaded', function(){
-                    // arProjectIDs.sort(function(a,b){return a-b});
-                    arProjectIDs.sort(function (a,b) {
-                        return a-b
-                    })
-                    $("#txtFindProject").autocomplete({
-                        source:arProjectIDs
-                    });
+         
+            lyrClientLines.on('data:loaded', function () {
+                arProjectIDs.sort(function (a, b) {
+                    return a - b
+                })
+                $("#txtFindProject").autocomplete({
+                    source: arProjectIDs
                 });
+            });
 
             lyrBOUWEL = L.geoJSON.ajax('data/wildlife_buowl.geojson',
                 { style: styleBOUWL, onEachFeature: processBOUWL, filter: filterBOUWL }
@@ -392,43 +481,43 @@
 
         function returnClientlineByID(id) {
             var arLayers = lyrClientLines.getLayers();
-            for (i = 0; i < arLayers.length-1; i++) {
+            for (i = 0; i < arLayers.length - 1; i++) {
                 var featureID = arLayers[i].feature.properties.Project;
-                if (featureID==id) {
+                if (featureID == id) {
                     return arLayers[i]
                 }
-                
+
             }
             return false;
         }
         function testClientLineID(id) {
-            if (arProjectIDs.indexOf(id)<0) {
+            if (arProjectIDs.indexOf(id) < 0) {
                 $("#divFindProject").addClass("has-error");
                 $("#divProjectError").html("******* Project ID NOT FOUND!***8");
-                $("#btnFindProject").attr("disabled",true);
-            }else{
+                $("#btnFindProject").attr("disabled", true);
+            } else {
                 $("#divFindProject").removeClass("has-error");
                 $("#divProjectError").html("");
-                $("#btnFindProject").attr("disabled",false);
+                $("#btnFindProject").attr("disabled", false);
             }
         }
-        $("#txtFindProject").on('keyup paste',function () {
+        $("#txtFindProject").on('keyup paste', function () {
             var id = $("#txtFindProject").val();
             testClientLineID(id);
 
         })
         $("#btnFindProject").click(function () {
-            var id= $("#txtFindProject").val();
+            var id = $("#txtFindProject").val();
             var lyr = returnClientlineByID(id);
             if (lyr) {
                 if (lyrSearch) {
                     lyrSearch.remove();
                 }
-                lyrSearch=L.geoJSON(lyr.toGeoJSON(), {style:{color:'red',weight:10,opacity:0.5}}).addTo(mymap);
+                lyrSearch = L.geoJSON(lyr.toGeoJSON(), { style: { color: 'red', weight: 10, opacity: 0.5 } }).addTo(mymap);
                 mymap.fitBounds(lyr.getBounds().pad(1));
                 var att = lyr.feature.properties;
-                $("#divProjectData").html("<h4 class='text-center'>attributes</h4> <h5> Type:"+att.type+"</h5> <h5> Row width: "+att.row_width +"M </h5>")
-            }else{
+                $("#divProjectData").html("<h4 class='text-center'>attributes</h4> <h5> Type:" + att.type + "</h5> <h5> Row width: " + att.row_width + "M </h5>")
+            } else {
                 $("#divProjectError").html("*********Project id not Found******")
             }
         })
