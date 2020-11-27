@@ -90,7 +90,8 @@
     <!-- jquery autocomplete -->
     <link rel="stylesheet" href="src/jquery-ui.min.css">
     <script src="src/jquery-ui.min.js"></script>
-
+    <!-- leaflet geometry utill -->
+    <script src="src/plugins/leaflet.geometryutil.js"></script>
     <style>
         #mapdiv {
             height: 100vh;
@@ -379,17 +380,20 @@
 
             ctlDraw = new L.Control.Draw({
                 draw: {
-                    circle: true,
-                    rectangle: true,
+                    polyline:false,
+                    polygon:false,
+                    circle: false,
+                    rectangle: false,
                 },
                 edit: {
-                    featureGroup: fgpDrawnItems
+                    featureGroup: fgpDrawnItems,
+                    remove:false
                 }
             });
             ctlDraw.addTo(mymap);
 
             mymap.on('draw:created', function (e) {
-                fgpDrawnItems.addLayer(e.layer);
+                fgpDrawnItems.addLayer(e.layer.bindPopup(e.layer.getLatLng().toString()));
             });
 
             // ************ Location Events **************
@@ -510,7 +514,7 @@
 
         function processClientLinears(json, lyr) {
             var att = json.properties;
-            lyr.bindTooltip("<h4>Linear Project: " + att.Project + "</h4>Type: " + att.type + "<br>ROW Width: " + att.row_width);
+            lyr.bindTooltip("<h4>Linear Project: " + att.Project + "</h4>Type: " + att.type + "<br>ROW Width: " + att.row_width+"<br>Length: "+returnMultiLength(lyr.getLatLngs()).toFixed(0));
             arProjectIDs.push(att.Project.toString());
         }
         function filterClientLines(json) {
@@ -762,7 +766,24 @@
                 $(btn).attr("disabled", false);
             }
         }
+        function returnLenght(arLL) {
+            var total = 0;
+                ;
 
+            for (var i = 1; i < arLL.length; i++) {
+                total = total + arLL[i - 1].distanceTo(arLL[i])
+
+            }
+            return total
+        }
+        function returnMultiLength(arArLL) {
+            var total = 0;
+            for (let i = 0; i < arArLL.length; i++) {
+                total = total + returnLenght(arArLL[i]);
+
+            }
+            return total;
+        }
 
 
     </script>
