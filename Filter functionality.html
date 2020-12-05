@@ -257,6 +257,7 @@
         var lyrEagleNests;
         var lyrRaptorNests;
         var lyrClientLines;
+        var lyrClientLinesBufer;
         var lyrBUOWL;
         var lyrBUOWLbuffer;
         var jsnBUOWLbuffer;
@@ -341,12 +342,15 @@
                 lyrMarkerCluster.addTo(mymap);
             });
 
+            lyrClientLinesBufer=L.featureGroup();
             lyrClientLines = L.geoJSON.ajax('data/client_lines.geojson', { style: styleClientLinears, onEachFeature: processClientLinears, filter: filterClientLines }).addTo(mymap);
             lyrClientLines.on('data:loaded', function () {
                 arProjectIDs.sort(function (a, b) { return a - b });
                 $("#txtFindProject").autocomplete({
                     source: arProjectIDs
                 });
+                lyrClientLinesBufer.addTo(mymap);
+                lyrClientLinesBufer.bringToFront();
             });
 
             lyrBUOWL = L.geoJSON.ajax('data/wildlife_buowl.geojson', { style: styleBUOWL, onEachFeature: processBUOWL, filter: filterBUOWL }).addTo(mymap);
@@ -523,6 +527,9 @@
             var att = json.properties;
             lyr.bindTooltip("<h4>Linear Project: " + att.Project + "</h4>Type: " + att.type + "<br>ROW Width: " + att.row_width+"<br>Length: "+returnMultiLength(lyr.getLatLngs()).toFixed(0));
             arProjectIDs.push(att.Project.toString());
+            var jsonBuffer=turf.buffer(json, att.row_width/1000,'kilometers');
+            var lyrBuffer=L.geoJSON(jsonBuffer,{style:{color:'grey',dashArray:'5,5'}});
+            lyrClientLinesBufer.addLayer(lyrBuffer)
         }
         function filterClientLines(json) {
             var arProjectFilters = [];
