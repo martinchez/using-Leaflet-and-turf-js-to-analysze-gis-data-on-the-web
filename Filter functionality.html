@@ -256,6 +256,8 @@
         var lyrRaptorNests;
         var lyrClientLines;
         var lyrBUOWL;
+        var lyrBUOWLbuffer;
+        var jsnBUOWLbuffer;
         var lyrGBH;
         var lyrSearch;
         var lyrMarkerCluster;
@@ -351,6 +353,9 @@
                 $("#txtFindBUOWL").autocomplete({
                     source: arHabitatIDs
                 });
+                jsnBUOWLbuffer= turf.buffer(lyrBUOWL.toGeoJSON(),0.3,'kilometers');
+                jsnBUOWLbuffer=L.geoJSON(jsnBUOWLbuffer,{style:{color:'yellow',dashArray:'5,5',fillOpacity:0}}).addTo(mymap);
+                lyrBUOWL.bringToFront();
             });
 
             lyrGBH = L.geoJSON.ajax('data/wildlife_gbh.geojson', { style: { color: 'fuchsia' } }).bindTooltip("GBH Nesting Area").addTo(mymap);
@@ -785,7 +790,7 @@
             return total;
         }
 
-
+        // function intersectPolyByPolyFC(POLY,FC)
     </script>
 </body>
 
